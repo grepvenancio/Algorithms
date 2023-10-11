@@ -1,48 +1,75 @@
-# Introdução
+# Intro
 
-Esse repositório contem uma série de algoritmos e estrutura de dados implementadas em rust.
+This repo contains a series of algorithms and data structures that are shown in the Front End Master's 
+Free Algorithm course but implemented in Rust.
 
-## O que é big O?
+## Big O
 
-O big O é uma forma de classificar algoritimos baseados no tempo e memória
-necessária durante sua execução, dependendo do input.
+Big O is a way to gategorize the growth of an algorithm's complexity (time or space complexity)
+in relation to its inputs.
 
-↓---- Ordem de complexidade -> Pode ser em relação a tempo ou espaço
+A **O (N)** algorithm means that the complexity of the algorithm will grow linearly based on input.
+
+↓---- Complexity order
 O (N)
-   ^--------- Quantidade de input
+   ^--------- Input
 
-É uma forma generica de classificar a "complexidade" de uma algoritimo.
-Ou seja quanto maior a quantidade de imput, qual é a proporção do crescimento
-computacional e nesseciadade de memoria?
+The runtime of the following code is *linear* (O (N)). Because more elements are added to the input, 
+an additional operation for each element will be needed to calculate the sum.
 
-A função abaixo tem um crescimento linear, que pode ser traduzida para uma
-função de complexidade **O (N)**
-Isso pode ser facilmente observado pelo loop no corpo da função, pois cada
-char a mais no input vai ser mais uma iteração no loop com a complexidade de
-tempo crescendo de forma linear
 
 ```rust
-fn sum_char_code_on(n: &str) -> usize {
+pub fn sum_char_code_on(n: &str) -> usize {
     let mut sum = 0;
-    for (index, _char) in n.chars().enumerate() {
-        sum += index
+    for char in n.chars() {
+        sum += char as usize;
     }
     return sum;
 }
 ```
-## O (N²)
 
-A complexidade do tempo nessa função vai crescer na forma de N², ou seja um
-input equivalente a 5 vai ter uma complexidade de 5²
+### Constants
+
+One could say that this algo has O (2N) complexity, but actually it is O (N). 
+Because we will always drop constants. O (~~2~~N) -> O (N).
 
 ```rust
-fn sum_char_code_onsquare2(n: &str) -> usize {
+pub fn sum_char_code_o2n(n: &str) -> usize {
     let mut sum = 0;
-    for (_index, _char) in n.chars().enumerate() {
-        for (index, _char) in n.chars().enumerate() {
-            sum += index
+    for (index, _char) in n.chars().enumerate() {
+        sum += char as usize;
+    }
+
+    for (index, _char) in n.chars().enumerate() {
+        sum += char as usize;
+    }
+    return sum;
+}
+```
+
+## O (N²)
+
+The time complexity of the following code will grow O(N²) time complexity, as it needs
+to do a "2D" loop over the input.
+
+```rust
+fn sum_char_code_square(n: &str) -> usize {
+    let mut sum = 0;
+    for char in n.chars() {
+        for char in n.chars() {
+            sum += char as usize
         }
     }
     return sum;
 }
 ```
+
+## O (n log n)
+
+TODO: QuickSort.
+
+## O (log n)
+
+TODO: Binary search tree.
+
+![Big-O Complexity.](https://en.wikipedia.org/wiki/Big_O_notation#/media/File:Comparison_computational_complexity.svg)
