@@ -10,10 +10,6 @@ in relation to its inputs.
 
 A **O (N)** algorithm means that the complexity of the algorithm will grow linearly based on input.
 
-↓---- Complexity order
-O (N)
-   ^--------- Input
-
 The runtime of the following code is *linear* (O (N)). Because more elements are added to the input, 
 an additional operation for each element will be needed to calculate the sum.
 
@@ -72,4 +68,4 @@ TODO: QuickSort.
 
 TODO: Binary search tree.
 
-![Big-O Complexity.](https://en.wikipedia.org/wiki/Big_O_notation#/media/File:Comparison_computational_complexity.svg)
+![Big-O Complexity.](/images/Comparison_computational_complexity.svg)
