@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = [
+    "array",
+    "doubly_linked_list",
+    "graphs",
+    "heap",
+    "maps_lru",
+    "quick_sort",
+    "recursion",
+    "search",
+    "sort",
+    "tree",
+    "tree_search",
+]
