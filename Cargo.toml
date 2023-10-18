@@ -1,15 +1,8 @@
-[workspace]
-resolver = "2"
-members = [
-    "array",
-    "doubly_linked_list",
-    "graphs",
-    "heap",
-    "maps_lru",
-    "quick_sort",
-    "recursion",
-    "search",
-    "sort",
-    "tree",
-    "tree_search",
-]
+[package]
+name = "algo_front_end_masters"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
