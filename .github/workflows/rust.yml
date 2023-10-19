@@ -40,13 +40,15 @@ jobs:
       with:
         name: documentation
         path: ./downloaded_docs
+    - name: Display structure of downloaded files
+      run: ls -R
 
     - uses: actions/checkout@master
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
       with:
-        path: downloaded_docs/
         type: "zip"
+        path: downloaded_docs/
         filename: "doc.zip"
     - name: Release
       uses: softprops/action-gh-release@v1
