@@ -45,7 +45,7 @@ jobs:
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
       with:
-        path: ./downloaded_docs
+        path: downloaded_docs/
         type: "zip"
         filename: "doc.zip"
     - name: Release
