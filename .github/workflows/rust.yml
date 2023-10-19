@@ -41,9 +41,15 @@ jobs:
         name: documentation
         path: ./downloaded_docs
 
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
+    - uses: actions/checkout@master
+    - name: Archive Release
+      uses: thedoctor0/zip-release@0.7.1
       with:
-        files: ./downloaded_docs/**
-        token: ${{ secrets.GITHUB_TOKEN }}
+        path: ./downloaded_docs
+        type: "zip"
+        filename: "doc.zip"
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: "doc.zip"
