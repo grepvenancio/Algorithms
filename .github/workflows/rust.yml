@@ -23,11 +23,17 @@ jobs:
     - name: Generate Documentation
       run: |
         cargo doc
+    - name: Archive Release
+      uses: thedoctor0/zip-release@0.7.1
+      with:
+        type: "zip"
+        path: target/doc
+        filename: "doc.zip"
     - name: Archive Documentation
       uses: actions/upload-artifact@v2
       with:
         name: documentation
-        path: target/doc
+        path: doc.zip
     - name: Display Documentation URL
       run: echo "Documentation is available as an artifact at ${{ steps.archive_documentation.outputs.artifact_url }}"
 
@@ -38,18 +44,10 @@ jobs:
     - name: Download Documentation Artifact
       uses: actions/download-artifact@v2
       with:
-        name: documentation
-        path: ./downloaded_docs
+        name: doc
+        path: doc.zip
     - name: Display structure of downloaded files
-      run: ls -lah
-
-    - uses: actions/checkout@master
-    - name: Archive Release
-      uses: thedoctor0/zip-release@0.7.1
-      with:
-        type: "zip"
-        path: ./downloaded_docs/algo_front_end_masters
-        filename: "doc.zip"
+      run: ls -R
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
