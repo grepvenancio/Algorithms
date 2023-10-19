@@ -19,17 +19,14 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Run tests
-      run: cargo test --verbose
-      
+      run: cargo test --verbose   
     - name: Generate Documentation
       run: |
-        cargo doc --no-deps
-        mv target/doc docs
+        cargo doc
     - name: Archive Documentation
       uses: actions/upload-artifact@v2
       with:
         name: documentation
-        path: /docs
-
+        path: target/doc
     - name: Display Documentation URL
       run: echo "Documentation is available as an artifact at ${{ steps.archive_documentation.outputs.artifact_url }}"
