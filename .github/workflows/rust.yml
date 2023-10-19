@@ -22,16 +22,15 @@ jobs:
       run: cargo test --verbose
       
     - name: Generate Documentation
-      run: cargo doc --no-deps
-      working-directory: ${{ github.workspace }}
-
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
+      run: |
+        cargo doc --no-deps
+        mv target/doc docs
+    
+    - name: Archive Documentation
+      uses: actions/upload-artifact@v2
       with:
-        files: ./target/doc/**
-        tag_name: v1.0
-        token: ${{ secrets.GITHUB_TOKEN }}
+        name: documentation
+        path: ./path/to/your/project/docs
 
-    - name: Upload Release URL
-      run: echo "::set-output name=release_url::${{ steps.create_release.outputs.html_url }}"
+    - name: Display Documentation URL
+      run: echo "Documentation is available as an artifact at ${{ steps.archive_documentation.outputs.artifact_url }}"
