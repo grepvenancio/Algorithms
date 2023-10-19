@@ -1,5 +1,14 @@
-// This function takes two arguments: a slice of [T] and a needle T 
-// and returns true if the slice contains the needle.
+/// This function take two arguments: an ordered slice and needle T,
+/// returning true if the slice contains the needle.
+///
+/// # Examples
+///
+///```rust
+/// # use algo_front_end_masters::search::binary_search;
+/// let arr: [u32; 5] = [1, 2, 3, 4, 5];
+/// let needle = 2;
+/// assert!(binary_search(&arr, needle) == true);
+/// ```
 pub fn binary_search<T: PartialOrd>(haystack: &[T], needle: T) -> bool {
     // the lower bound of the binary search
     let mut low = 0;
@@ -17,7 +26,7 @@ pub fn binary_search<T: PartialOrd>(haystack: &[T], needle: T) -> bool {
         match haystack[mid].partial_cmp(&needle).unwrap() {
             // Return true if equal
             std::cmp::Ordering::Equal => return true,
-            // If the element is smaller than the needle, we make the lower bound equal to 
+            // If the element is smaller than the needle, we make the lower bound equal to
             // the mid index + 1, so we will discard everything to the left of the mid.
             std::cmp::Ordering::Less => low = mid + 1,
             // if the element is greater than the needle, we discard everything to the right of

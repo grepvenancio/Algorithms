@@ -1,6 +1,14 @@
-// This linear search function will take a sequence of T and a needle T, and it will
-// search in the sequence for an occurrence that is equal to the needle, returning true
-// if find it, and false if not.
+/// This function will linearly search a slice for an ocurrence of a needle T,
+/// and it will return true if find it, and false if not.
+///
+/// # Examples
+///
+///```rust
+/// # use algo_front_end_masters::search::linear_search;
+/// let arr: [u32; 5] = [2, 4, 5, 1, 3];
+/// let needle = 1;
+/// assert!(linear_search(&arr, needle) == true);
+/// ```
 pub fn linear_search<T: PartialEq>(haystack: &[T], needle: T) -> bool {
     haystack.iter().any(|e| *e == needle)
 }
