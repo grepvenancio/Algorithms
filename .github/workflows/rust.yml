@@ -28,14 +28,12 @@ jobs:
       with:
         type: "zip"
         path: target/doc
-        filename: "doc.zip"
+        filename: doc.zip
     - name: Archive Documentation
       uses: actions/upload-artifact@v2
       with:
         name: documentation
         path: doc.zip
-    - name: Display Documentation URL
-      run: echo "Documentation is available as an artifact at ${{ steps.archive_documentation.outputs.artifact_url }}"
 
   release:
     runs-on: ubuntu-latest
@@ -46,10 +44,8 @@ jobs:
       with:
         name: documentation
         path: doc.zip
-    - name: Display structure of downloaded files
-      run: ls -R
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: "doc.zip"
+        files: doc.zip
