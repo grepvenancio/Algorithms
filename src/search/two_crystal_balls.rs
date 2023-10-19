@@ -1,11 +1,13 @@
 /// This function takes a slice &[bool] and returns the index of the first occurrence of true.
 ///
-/// Example
+/// # Examples
+///
 ///```rust
-///let arr_bool: [bool; 5] = [false, false, true, true, true];
-///assert_eq(two_crystall_balls(arr_bool), 2);
+/// # use algo_front_end_masters::search::two_crystal_balls;
+/// let arr_bool: [bool; 5] = [false, false, true, true, true];
+/// assert_eq!(two_crystal_balls(&arr_bool), Some(2));
 ///```
-pub fn two_crystall_balls(breaks: &[bool]) -> Option<usize> {
+pub fn two_crystal_balls(breaks: &[bool]) -> Option<usize> {
     // Calculate the jump distance based on the square root of the number of elements.
     let jmp = f32::sqrt(breaks.len() as f32) as usize;
     // Initialize the address (index) to 0.
@@ -36,14 +38,14 @@ pub fn two_crystall_balls(breaks: &[bool]) -> Option<usize> {
 
 #[cfg(test)]
 mod tests {
-    use super::two_crystall_balls;
+    use super::two_crystal_balls;
 
     #[test]
     fn test_binary_search() {
         let arr: [bool; 10] = [
             false, false, false, false, true, true, true, true, true, true,
         ];
-        let index = two_crystall_balls(&arr);
+        let index = two_crystal_balls(&arr);
         assert_eq!(index, Some(4));
     }
 }

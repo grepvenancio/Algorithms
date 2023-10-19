@@ -1,11 +1,9 @@
 #![allow(dead_code)]
 
-//! This crate provides a series of search algorithms,
-//! wich includes: 
-//! - [x] Linear Search
-//! - [x] Binary Search
-//! plus the two crystal balls problem.
-
-mod linear_search;
 mod binary_search;
+mod linear_search;
 mod two_crystal_balls;
+
+pub use binary_search::binary_search;
+pub use linear_search::linear_search;
+pub use two_crystal_balls::two_crystal_balls;

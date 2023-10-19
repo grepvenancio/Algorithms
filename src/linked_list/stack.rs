@@ -10,44 +10,56 @@ pub struct Stack<T> {
 
 type Link<T> = Option<Box<Node<T>>>;
 
-pub struct Node<T> {
+struct Node<T> {
     elem: T,
-    next: Link<T>
+    next: Link<T>,
 }
 
 impl<T> Stack<T> {
     /// Create an empty Stack
     ///
-    /// Example
+    /// # Examples
+    ///
     ///```rust
-    /// let stack = Stack::new();
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let stack: Stack<String> = Stack::new();
     /// assert_eq!(stack.len(), 0);
     ///```
     pub fn new() -> Self {
-        Stack { head: None, length: 0 }
+        Stack {
+            head: None,
+            length: 0,
+        }
     }
 
     // Push an element onto the stack
     //
-    // Example
+    /// # Examples
+    ///
     ///```rust
-    /// let stack = Stack::new();
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let mut stack = Stack::new();
     /// stack.push("World");
     ///```
     pub fn push(&mut self, elem: T) {
         // Create or new head and set the next value as the current head.
-        let new_head = Box::new(Node {elem, next: self.head.take()});
+        let new_head = Box::new(Node {
+            elem,
+            next: self.head.take(),
+        });
         // Set the new head
-        self.head = Some(new_head); 
+        self.head = Some(new_head);
         // Increase the length
         self.length += 1;
     }
 
     /// Pop an element from the stack
     ///
-    // Example
+    /// # Examples
+    ///
     ///```rust
-    /// let stack = Stack::new();
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let mut stack = Stack::new();
     /// stack.push("Hello");
     /// stack.push("World!");
     /// assert_eq!(stack.pop(), Some("World!"));
@@ -66,9 +78,11 @@ impl<T> Stack<T> {
 
     /// Returns a shared reference to the top of the stack.
     ///
-    ///Example
+    /// # Examples
+    ///
     ///```rust
-    /// let stack = Stack::new();
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let mut stack = Stack::new();
     /// stack.push("Hello World!");
     /// assert_eq!(stack.peek(), Some(&"Hello World!"));
     ///```
@@ -78,9 +92,11 @@ impl<T> Stack<T> {
 
     /// Returns a mut reference to the top of the stack.
     ///
-    ///Example
+    /// # Examples
+    ///
     ///```rust
-    /// let stack = Stack::new();
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let mut stack = Stack::new();
     /// stack.push("Hello World!");
     /// stack.peek_mut().map(|e| *e = "Hello");
     /// assert_eq!(stack.peek_mut(), Some(&mut "Hello"));
@@ -93,7 +109,6 @@ impl<T> Stack<T> {
     pub fn len(&self) -> usize {
         self.length
     }
-
 }
 
 #[cfg(test)]
@@ -124,4 +139,3 @@ mod tests {
         assert_eq!(stack.peek_mut(), None);
     }
 }
-

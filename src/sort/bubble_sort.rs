@@ -1,16 +1,17 @@
-/// This function takes a mut reference to a slice and reorder it with 
+/// This function takes a mut reference to a slice and reorder it with
 /// bubble sort.
 ///
-/// Example
+/// # Examples
 ///
-/// ```rust
-///let mut arr: [i32; 5] = [2, 3, 5, 4, 1]; 
-///bubble_sort(&mut arr);
-///assert_eq!(arr, [1, 2, 3, 4, 5]);
+///```rust
+/// # use algo_front_end_masters::sort::bubble_sort;
+/// let mut arr: [i32; 5] = [2, 3, 5, 4, 1];
+/// bubble_sort(&mut arr);
+/// assert_eq!(arr, [1, 2, 3, 4, 5]);
 /// ```
 pub fn bubble_sort<T: PartialOrd>(arr: &mut [T]) {
     let len = arr.len(); // Get the length of the input array 'arr'.
-    // The outer loop iterates from 0 to 'len - 1'.
+                         // The outer loop iterates from 0 to 'len - 1'.
     for i in 0..len {
         // 'i' represents the number of elements that are already in their final sorted position.
         // The inner loop iterates from 0 to '(len - 1 - i)'.
@@ -27,15 +28,13 @@ pub fn bubble_sort<T: PartialOrd>(arr: &mut [T]) {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::bubble_sort::bubble_sort;
-
+    use super::bubble_sort;
 
     #[test]
-        fn test_bubble_sort() {
-        let mut arr: [i32; 5] = [2, 3, 5, 4, 1]; 
+    fn test_bubble_sort() {
+        let mut arr: [i32; 5] = [2, 3, 5, 4, 1];
         bubble_sort(&mut arr);
         assert_eq!(arr, [1, 2, 3, 4, 5]);
     }
