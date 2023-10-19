@@ -39,11 +39,11 @@
 //! ```rust
 //! pub fn sum_char_code_o2n(n: &str) -> usize {
 //!    let mut sum = 0;
-//!    for (index, _char) in n.chars().enumerate() {
+//!    for (index, char) in n.chars().enumerate() {
 //!        sum += char as usize;
 //!    }
 //!
-//!    for (index, _char) in n.chars().enumerate() {
+//!    for (index, char) in n.chars().enumerate() {
 //!        sum += char as usize;
 //!    }
 //!    return sum;
