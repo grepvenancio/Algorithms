@@ -3,13 +3,29 @@
 ///
 ///  (D) -> (C) -> (B) -> (A)
 ///  head
+#[derive(Debug)]
 pub struct Stack<T> {
     head: Link<T>,
     length: usize,
 }
 
+pub struct IntoIter<T> {
+    stack: Stack<T>,
+}
+
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
+    length: usize,
+}
+
+pub struct IterMut<'a, T> {
+    next: Option<&'a mut Node<T>>,
+    length: usize,
+}
+
 type Link<T> = Option<Box<Node<T>>>;
 
+#[derive(Debug)]
 struct Node<T> {
     elem: T,
     next: Link<T>,
@@ -109,6 +125,90 @@ impl<T> Stack<T> {
     pub fn len(&self) -> usize {
         self.length
     }
+
+    pub fn iter(&self) -> Iter<T> {
+        Iter {
+            next: self.head.as_deref(),
+            length: self.length,
+        }
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<T> {
+        IterMut {
+            next: self.head.as_deref_mut(),
+            length: self.length,
+        }
+    }
+}
+
+impl<T> IntoIterator for Stack<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter { stack: self }
+    }
+}
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.stack.pop()
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Stack<T> {
+    type Item = &'a T;
+    type IntoIter = Iter<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
+impl<'a, T> IntoIterator for &'a mut Stack<T> {
+    type Item = &'a mut T;
+    type IntoIter = IterMut<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter_mut()
+    }
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|head| {
+            self.next = head.next.as_deref();
+            self.length -= 1;
+            &head.elem
+        })
+    }
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a mut T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.take().map(|head| {
+            self.next = head.next.as_deref_mut();
+            self.length -= 1;
+            &mut head.elem
+        })
+    }
+}
+
+impl<T> Extend<T> for Stack<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        for item in iter {
+            self.push(item);
+        }
+    }
+}
+
+impl<T> FromIterator<T> for Stack<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut stack = Stack::new();
+        stack.extend(iter);
+        stack
+    }
 }
 
 #[cfg(test)]
@@ -137,5 +237,19 @@ mod tests {
         assert_eq!(stack.pop(), None);
         assert_eq!(stack.peek(), None);
         assert_eq!(stack.peek_mut(), None);
+    }
+
+    #[test]
+    fn test_stack_iter() {
+        let mut stack_a = Stack::from_iter(2..=10);
+        assert_eq!(stack_a.len(), 9);
+        assert_eq!(stack_a.pop(), Some(10));
+        for e in stack_a.iter_mut() {
+            *e *= 2;
+        }
+        assert_eq!(stack_a.pop(), Some(18));
+        let mut stack_b = stack_a.iter().collect::<Stack<_>>();
+        assert_eq!(stack_b.pop(), Some(&4));
+        assert_eq!(stack_b.len(), 6);
     }
 }

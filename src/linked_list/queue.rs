@@ -14,6 +14,24 @@ pub struct Queue<T> {
     _boo: PhantomData<T>,
 }
 
+pub struct IntoIter<T> {
+    queue: Queue<T>,
+}
+
+pub struct Iter<'a, T> {
+    head: Link<T>,
+    tail: Link<T>,
+    length: usize,
+    _boo: PhantomData<&'a T>,
+}
+
+pub struct IterMut<'a, T> {
+    head: Link<T>,
+    tail: Link<T>,
+    length: usize,
+    _boo: PhantomData<&'a mut T>,
+}
+
 struct Node<T> {
     next: Link<T>,
     elem: T,
@@ -147,11 +165,98 @@ impl<T> Queue<T> {
     pub fn len(&self) -> usize {
         self.length
     }
+
+    pub fn iter(&self) -> Iter<T> {
+        Iter {
+            head: self.head,
+            tail: self.tail,
+            length: self.length,
+            _boo: PhantomData,
+        }
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<T> {
+        IterMut {
+            head: self.head,
+            tail: self.tail,
+            length: self.length,
+            _boo: PhantomData,
+        }
+    }
 }
 
 impl<T> Drop for Queue<T> {
     fn drop(&mut self) {
         while let Some(_) = self.deque() {}
+    }
+}
+
+impl<T> IntoIterator for Queue<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter { queue: self }
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Queue<T> {
+    type Item = &'a T;
+    type IntoIter = Iter<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
+impl<'a, T> IntoIterator for &'a mut Queue<T> {
+    type Item = &'a mut T;
+    type IntoIter = IterMut<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter_mut()
+    }
+}
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.queue.deque()
+    }
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.head.map(|head| unsafe {
+            self.head = (*head.as_ptr()).next;
+            self.length -= 1;
+            &(*head.as_ptr()).elem
+        })
+    }
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a mut T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.head.map(|head| unsafe {
+            self.head = (*head.as_ptr()).next;
+            self.length -= 1;
+            &mut (*head.as_ptr()).elem
+        })
+    }
+}
+
+impl<T> Extend<T> for Queue<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        for item in iter {
+            self.enqueue(item);
+        }
+    }
+}
+
+impl<T> FromIterator<T> for Queue<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut queue = Queue::new();
+        queue.extend(iter);
+        queue
     }
 }
 
@@ -180,5 +285,31 @@ mod tests {
         queue.peek_mut().map(|x| *x = "World!");
         assert_eq!(queue.deque(), Some("World!"));
         assert_eq!(queue.len(), 0);
+    }
+
+    #[test]
+    fn test_iter_queue() {
+        let mut queue_a = Queue::from_iter(2..=10);
+        assert_eq!(queue_a.iter().count(), 9);
+        assert_eq!(queue_a.len(), 9);
+        assert_eq!(queue_a.iter().find(|&&e| e == 5), Some(&5));
+        assert_eq!(queue_a.iter().find(|&&e| e == 15), None);
+        for e in queue_a.iter_mut() {
+            *e *= 2
+        }
+        let mut queue_b = queue_a.iter().collect::<Queue<_>>();
+        assert_eq!(queue_b.iter().count(), 9);
+        assert_eq!(queue_b.deque(), Some(&4));
+        assert_eq!(queue_b.deque(), Some(&6));
+        assert_eq!(queue_b.deque(), Some(&8));
+        assert_eq!(queue_b.deque(), Some(&10));
+        assert_eq!(queue_b.deque(), Some(&12));
+        assert_eq!(queue_b.deque(), Some(&14));
+        assert_eq!(queue_b.deque(), Some(&16));
+        assert_eq!(queue_b.deque(), Some(&18));
+        assert_eq!(queue_b.deque(), Some(&20));
+        for _e in &queue_b {}
+        assert_eq!(queue_b.len(), 0);
+        assert_eq!(queue_b.deque(), None);
     }
 }

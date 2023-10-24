@@ -75,7 +75,7 @@
 //!
 //! **O (log n)** algorithms are very efficient when dealing with large datasets, they are normally
 //! associated with algorithms that divide a problem into smaller parts by a constanct factor,
-//! one example of this gategory of algorithms is a binary serch: 
+//! one example of this gategory of algorithms is a binary serch:
 //!
 //!```rust
 //! pub fn binary_search<T: PartialOrd>(haystack: &[T], needle: T) -> bool {

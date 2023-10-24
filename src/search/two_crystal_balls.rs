@@ -47,5 +47,10 @@ mod tests {
         ];
         let index = two_crystal_balls(&arr);
         assert_eq!(index, Some(4));
+        let arr: [bool; 10] = [
+            false, false, false, false, false, false, false, false, false, false,
+        ];
+        let index = two_crystal_balls(&arr);
+        assert_eq!(index, None);
     }
 }
