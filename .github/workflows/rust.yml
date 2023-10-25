@@ -31,7 +31,7 @@ jobs:
     - name: Display Documentation URL
       run: echo "Documentation is available as an artifact at ${{ steps.archive_documentation.outputs.artifact_url }}"
 
-  release:
+  deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
