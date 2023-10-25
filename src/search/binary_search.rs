@@ -44,6 +44,7 @@ mod tests {
     #[test]
     fn test_binary_search() {
         let arr: Vec<i32> = (0..=10).collect();
-        assert_eq!(binary_search(&arr, 9), true);
+        assert!(binary_search(&arr, 9));
+        assert!(!binary_search(&arr, 12));
     }
 }

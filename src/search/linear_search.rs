@@ -20,7 +20,7 @@ mod tests {
     #[test]
     fn test_linear_search() {
         let arr: [i32; 3] = [10, 20, 30];
-        assert_eq!(linear_search(&arr, 10), true);
-        assert_eq!(linear_search(&arr, 40), false);
+        assert!(linear_search(&arr, 10));
+        assert!(!linear_search(&arr, 40));
     }
 }
