@@ -1,9 +1,10 @@
+use std::fmt::Debug;
+
 /// A stack is a LIFO data structure that you can push a item onto it
 /// or pop it.
 ///
-///  (D) -> (C) -> (B) -> (A)
+///  (D) -> (C) -> (B) -> (A) 
 ///  head
-#[derive(Debug)]
 pub struct Stack<T> {
     head: Link<T>,
     length: usize,
@@ -126,6 +127,22 @@ impl<T> Stack<T> {
         self.length
     }
 
+    /// Returns an Iterator over the stack. 
+    ///
+    /// The iterator yields all items from start to end.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let mut stack = Stack::from_iter(1..=3);
+    /// let mut iterator = stack.iter();
+    ///
+    /// assert_eq!(iterator.next(), Some(&3));
+    /// assert_eq!(iterator.next(), Some(&2));
+    /// assert_eq!(iterator.next(), Some(&1));
+    /// assert_eq!(iterator.next(), None);
+    /// ```
     pub fn iter(&self) -> Iter<T> {
         Iter {
             next: self.head.as_deref(),
@@ -133,11 +150,40 @@ impl<T> Stack<T> {
         }
     }
 
+    /// Returns an Iterator that allows modifyng each value. 
+    ///
+    /// The iterator yields all items from start to end.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use algo_front_end_masters::linked_list::Stack;
+    /// let mut stack = Stack::from_iter(1..=3);
+    ///
+    /// for elem in stack.iter_mut() {
+    ///     *elem *= 2;
+    /// }
+    ///
+    /// assert_eq!(stack.pop(), Some(6));
+    /// assert_eq!(stack.pop(), Some(4));
+    /// assert_eq!(stack.pop(), Some(2));
+    /// ```
     pub fn iter_mut(&mut self) -> IterMut<T> {
         IterMut {
             next: self.head.as_deref_mut(),
             length: self.length,
         }
+    }
+
+    /// Returns the true if the stack is empty.
+    pub fn is_empty(&self) -> bool {
+        self.length == 0 
+    }
+}
+
+impl<T> Default for Stack<T> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -205,11 +251,53 @@ impl<T> Extend<T> for Stack<T> {
 
 impl<T> FromIterator<T> for Stack<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        let mut stack = Stack::new();
+        let mut stack = Self::new();
         stack.extend(iter);
         stack
     }
 }
+
+impl<T: Clone> Clone for Stack<T> {
+    fn clone(&self) -> Self {
+        let mut clone_stack = Self::new();
+        let tmp = self.iter().collect::<Stack<_>>();
+        clone_stack.extend(tmp.into_iter().cloned());
+        clone_stack
+    }
+}
+
+impl<T: Debug> Debug for Stack<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_list().entries(self).finish()
+    }
+}
+
+impl<T: Eq> Eq for Stack<T> {}
+
+impl<T: PartialOrd> PartialOrd for Stack<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.iter().partial_cmp(other)
+    }
+}
+
+impl<T: PartialEq> PartialEq for Stack<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.len() == other.len() && self.iter().eq(other)
+    }
+}
+
+impl<T: Ord> Ord for Stack<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.iter().cmp(other)
+    }
+}
+
+impl<T> Drop for Stack<T> {
+    fn drop(&mut self) {
+        while self.pop().is_some() {}
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -218,8 +306,7 @@ mod tests {
     #[test]
     fn test_stack() {
         let mut stack = Stack::new();
-
-        assert_eq!(stack.len(), 0);
+        assert!(stack.is_empty());
         assert_eq!(stack.pop(), None);
         assert_eq!(stack.peek(), None);
         assert_eq!(stack.peek_mut(), None);
@@ -227,9 +314,14 @@ mod tests {
         stack.push("Hello");
         stack.push("World");
 
+        let stack_clone = stack.clone();
+        assert_eq!(stack, stack_clone);
+
         assert_eq!(stack.len(), 2);
         assert_eq!(stack.peek(), Some(&"World"));
-        stack.peek_mut().map(|value| *value = "World!");
+
+        if let Some(head) = stack.peek_mut() { *head = "World!" }
+
         assert_eq!(stack.pop(), Some("World!"));
         assert_eq!(stack.peek_mut(), Some(&mut "Hello"));
         assert_eq!(stack.pop(), Some("Hello"));
@@ -251,5 +343,22 @@ mod tests {
         let mut stack_b = stack_a.iter().collect::<Stack<_>>();
         assert_eq!(stack_b.pop(), Some(&4));
         assert_eq!(stack_b.len(), 6);
+    }
+
+    #[test]
+    fn test_eq_ord_stack() {
+        let mut stack_a = Stack::<i32>::new();
+        let mut stack_b = Stack::<i32>::new();
+        assert!(stack_a == stack_b);
+        stack_a.push(1);
+        stack_a.push(2);
+        assert!(stack_a > stack_b);
+        assert!(stack_a != stack_b);
+        stack_b.push(1);
+        stack_b.push(2);
+        assert!(stack_a == stack_b);
+        let _ = stack_b.pop();
+        stack_b.push(4);
+        assert!(stack_b > stack_a);
     }
 }

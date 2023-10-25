@@ -1,10 +1,10 @@
-use std::{marker::PhantomData, ptr::NonNull};
+use std::{marker::PhantomData, ptr::NonNull, fmt::Debug};
 
 /// A Queue is a data structure that store 2 pointers, one to the head of the list and other to
 /// the tail of it, you can interact with a queue by inserting a node to the tail
 /// and remove one from the head.
 ///
-///  (A) -> (B) -> (C) -> (D)
+///  (A) -> (B) -> (C) -> (D) 
 ///  head                 tail
 pub struct Queue<T> {
     head: Link<T>,
@@ -166,6 +166,22 @@ impl<T> Queue<T> {
         self.length
     }
 
+    /// Returns an Iterator over the queue. 
+    ///
+    /// The iterator yields all items from start to end.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use algo_front_end_masters::linked_list::Queue;
+    /// let mut queue = Queue::from_iter(1..=3);
+    /// let mut iterator = queue.iter();
+    ///
+    /// assert_eq!(iterator.next(), Some(&1));
+    /// assert_eq!(iterator.next(), Some(&2));
+    /// assert_eq!(iterator.next(), Some(&3));
+    /// assert_eq!(iterator.next(), None);
+    /// ```
     pub fn iter(&self) -> Iter<T> {
         Iter {
             head: self.head,
@@ -175,6 +191,24 @@ impl<T> Queue<T> {
         }
     }
 
+    /// Returns an Iterator that allows modifyng each value. 
+    ///
+    /// The iterator yields all items from start to end.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// # use algo_front_end_masters::linked_list::Queue;
+    /// let mut queue = Queue::from_iter(1..=3);
+    ///
+    /// for elem in queue.iter_mut() {
+    ///     *elem *= 2;
+    /// }
+    ///
+    /// assert_eq!(queue.deque(), Some(2));
+    /// assert_eq!(queue.deque(), Some(4));
+    /// assert_eq!(queue.deque(), Some(6));
+    /// ```
     pub fn iter_mut(&mut self) -> IterMut<T> {
         IterMut {
             head: self.head,
@@ -183,11 +217,22 @@ impl<T> Queue<T> {
             _boo: PhantomData,
         }
     }
+
+    /// Returns the true if the stack is empty.
+    pub fn is_empty(&self) -> bool {
+        self.length == 0 
+    }
+}
+
+impl<T> Default for Queue<T> {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl<T> Drop for Queue<T> {
     fn drop(&mut self) {
-        while let Some(_) = self.deque() {}
+        while self.deque().is_some() {}
     }
 }
 
@@ -254,9 +299,43 @@ impl<T> Extend<T> for Queue<T> {
 
 impl<T> FromIterator<T> for Queue<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        let mut queue = Queue::new();
+        let mut queue = Self::new();
         queue.extend(iter);
         queue
+    }
+}
+
+impl<T: Clone> Clone for Queue<T> {
+    fn clone(&self) -> Self {
+        let mut clone_queue = Self::new();
+        clone_queue.extend(self.iter().cloned());
+        clone_queue
+    }
+} 
+
+impl<T: Debug> Debug for Queue<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_list().entries(self).finish()
+    }
+}
+
+impl<T: PartialEq> PartialEq for Queue<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.len() == other.len() && self.iter().eq(other)
+    }
+}
+
+impl<T: PartialOrd> PartialOrd for Queue<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.iter().partial_cmp(other)
+    }
+}
+
+impl<T: Eq> Eq for Queue<T> {}
+
+impl<T: Ord> Ord for Queue<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.iter().cmp(other)
     }
 }
 
@@ -267,7 +346,7 @@ mod tests {
     #[test]
     fn test_queue() {
         let mut queue = Queue::new();
-        assert_eq!(queue.len(), 0);
+        assert!(queue.is_empty());
         assert_eq!(queue.peek(), None);
         assert_eq!(queue.peek_mut(), None);
         assert_eq!(queue.deque(), None);
@@ -275,14 +354,18 @@ mod tests {
         queue.enqueue("Hello");
         queue.enqueue("World");
 
+        let queue_clone = queue.clone();
+        assert_eq!(queue, queue_clone);
+
         assert_eq!(queue.len(), 2);
         assert_eq!(queue.peek(), Some(&"Hello"));
         assert_eq!(queue.peek_mut(), Some(&mut "Hello"));
         assert_eq!(queue.deque(), Some("Hello"));
         assert_eq!(queue.len(), 1);
         assert_eq!(queue.peek(), Some(&"World"));
-        assert_eq!(queue.peek_mut(), Some(&mut "World"));
-        queue.peek_mut().map(|x| *x = "World!");
+
+        if let Some(head) = queue.peek_mut() { *head = "World!" }
+
         assert_eq!(queue.deque(), Some("World!"));
         assert_eq!(queue.len(), 0);
     }
@@ -311,5 +394,23 @@ mod tests {
         for _e in &queue_b {}
         assert_eq!(queue_b.len(), 0);
         assert_eq!(queue_b.deque(), None);
+    }
+
+    #[test]
+    fn test_eq_ord_queue() {
+        let mut queue_a = Queue::<i32>::new();
+        let mut queue_b = Queue::<i32>::new();
+        assert!(queue_a == queue_b);
+        queue_a.enqueue(1);
+        queue_a.enqueue(2);
+        assert!(queue_a > queue_b);
+        assert!(queue_a != queue_b);
+        queue_b.enqueue(1);
+        queue_b.enqueue(2);
+        assert!(queue_a == queue_b);
+        let _ = queue_b.deque();
+        queue_b.enqueue(4);
+        assert!(queue_b > queue_a);
+        assert!(queue_b != queue_a);
     }
 }
