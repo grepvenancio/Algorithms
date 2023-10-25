@@ -19,4 +19,31 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --verbose   
+    - name: Generate Documentation
+      run: |
+        cargo doc
+    - name: Archive Documentation
+      uses: actions/upload-artifact@v2
+      with:
+        name: documentation
+        path: target/doc
+    - name: Display Documentation URL
+      run: echo "Documentation is available as an artifact at ${{ steps.archive_documentation.outputs.artifact_url }}"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Download Documentation Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: documentation
+        path: ./public
+    - name: Display structure of download
+      run: ls -R
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
