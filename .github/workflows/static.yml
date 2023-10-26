@@ -24,14 +24,14 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying 
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Generate Documentation
-        run: cargo doc --no-deps --verbose --target-dir ./public
+        run: cargo doc --no-deps --verbose --target-dir public
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Pages
@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           # Upload entire repository
-          path: './public'
+          path: ./public/doc/algo_front_end_masters/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
