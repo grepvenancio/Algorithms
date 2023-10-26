@@ -31,12 +31,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Generate Documentation
-        run: |
-          cargo doc --no-deps --verbose --target-dir ./public
+        run: cargo doc --no-deps --verbose --target-dir ./public
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v3
+      - name: Display structure
+        run: ls -R
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
