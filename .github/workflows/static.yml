@@ -37,7 +37,7 @@ jobs:
       - name: Generate Documentation
         run: cargo doc --no-deps --verbose --target-dir public
       - name: Rediraction
-        run: echo '<meta http-equiv="refresh" content="0; URL=./doc/algo_front_end_masters/index.html" />' >> .public/index.html
+        run: echo '<meta http-equiv="refresh" content="0; URL=./doc/algo_front_end_masters/index.html" />' >> ./public/index.html
       - name: Display structure
         run: ls -R
       - name: Upload artifact
