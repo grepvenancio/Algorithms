@@ -154,7 +154,7 @@ impl<T> Queue<T> {
     /// queue.peek_mut().map(|e| *e = "Hello");
     /// assert_eq!(queue.peek_mut(), Some(&mut "Hello"));
     ///```
-    pub fn peek_mut(&self) -> Option<&mut T> {
+    pub fn peek_mut(&mut self) -> Option<&mut T> {
         // SAFETY: It's okay dereference head because there is no way
         // to inseart a null pointer to our queue, so the head points to a valid memory
         // address.

@@ -170,6 +170,24 @@ pub mod linked_list;
 /// so you can acess a specific element in the array by just providing an offset and multiplying by the data
 /// size contained in the array.
 ///
+/// ## ArrayList or Vec
+///
+/// An ArrayList is a data structure that works using an Array underneath the roof and provides a
+/// way of growing, the growing can be implemented by just setting a capacity usize and
+/// everytime the len of the ArrayList is bigger than the capacity you just create a new array with 
+/// a bigger capacity and memcpy every element of the previous array, this can get messy with you 
+/// provide operations like "enqueue" or "deque" as you will need to shift every element in the
+/// array.
+///
+/// ## RingBuffer or VecDeque
+///
+/// A Ring Buffer is a list that instead of using 0 idx as it's head and len as it's tail, 
+/// it uses an n idx to represent the head and do the same if the tail, in this way instead of
+/// shifting every element when inserting to the head we can just do a -1 to the head idx, 
+/// or a +1 if we are removing from the head, the tail follows the same pattern. We call it a 
+/// ring buffer because given an especific idx an element will wrap to the inverse side of the list
+/// and we can determine it's real position using the % operator.
+///
 pub mod array;
 
 pub mod graphs;
