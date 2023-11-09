@@ -182,17 +182,24 @@ pub mod linked_list;
 /// ## RingBuffer or VecDeque
 ///
 /// A Ring Buffer is a list that instead of using 0 idx as it's head and len as it's tail, 
-/// it uses an n idx to represent the head and do the same if the tail, in this way instead of
-/// shifting every element when inserting to the head we can just do a -1 to the head idx, 
-/// or a +1 if we are removing from the head, the tail follows the same pattern. We call it a 
+/// it uses an n idx (that can be 0) to represent the head and do the same if the tail, in this way instead of
+/// shifting every element when inserting to the head we can drecrease the head indx by 1, 
+/// or increase by 1 if we are removing from the head, the tail follows the same pattern. We call it a 
 /// ring buffer because given an especific idx an element will wrap to the inverse side of the list
-/// and we can determine it's real position using the % operator.
+/// and we can determine it's real position using the % operator, so for example, if we have a
+/// fixed size ring buffer with a capacity to hold 10 itens, we can determine the real idx of the
+/// element by doing (self.len % self.buf.cap), so for example, this same fixed size ring buffer
+/// will overwrite any element that is already in the write position, so if we insert the 20th
+/// element in this ring buffer, the element will be writen in the (20 % 10 = 0) idx.
 ///
 pub mod array;
+
+// Recursion is when a function call itself over and over until it reachs a base case, from there they will
+// start to return a value to to the caller adress until it reachs the first caller. 
+pub mod recursion;
 
 pub mod graphs;
 pub mod heap;
 pub mod maps_lru;
-pub mod recursion;
 pub mod tree;
 pub mod tree_search;
